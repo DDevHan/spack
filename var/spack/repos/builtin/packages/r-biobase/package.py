@@ -36,3 +36,4 @@ class RBiobase(RPackage):
     version('2.36.2', '8854eb70acabb07b55d2953fb1ecff31')
 
     depends_on('r-biocgenerics', type=('build', 'run'))
+    depends_on('r@3.4.0:3.4.9', when='2.36.2')
