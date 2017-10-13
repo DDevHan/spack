@@ -1,0 +1,62 @@
+##############################################################################
+# Copyright (c) 2013-2017, Lawrence Livermore National Security, LLC.
+# Produced at the Lawrence Livermore National Laboratory.
+#
+# This file is part of Spack.
+# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
+# LLNL-CODE-647188
+#
+# For details, see https://github.com/llnl/spack
+# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License (as
+# published by the Free Software Foundation) version 2.1, February 1999.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
+# conditions of the GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+##############################################################################
+#
+# This is a template package file for Spack.  We've put "FIXME"
+# next to all the things you'll want to change. Once you've handled
+# them, you can save this file and test your package like this:
+#
+#     spack install r-acde
+#
+# You can edit this file again by typing:
+#
+#     spack edit r-acde
+#
+# See the Spack documentation for more information on packaging.
+# If you submit this package back to Spack as a pull request,
+# please first remove this boilerplate and all FIXME comments.
+#
+from spack import *
+
+
+class RAcde(RPackage):
+    """This package provides a multivariate inferential analysis method 
+       for detecting differentially expressed genes in gene expression 
+       data. It uses artificial components, close to the data's principal 
+       components but with an exact interpretation in terms of 
+       differential genetic expression, to identify differentially 
+       expressed genes while controlling the false discovery rate (FDR). 
+       The methods on this package are described in the vignette or in the 
+       article 'Multivariate Method for Inferential Identification of 
+       Differentially Expressed Genes in Gene Expression Experiments' 
+       by J. P. Acosta, L. Lopez-Kleine and S. Restrepo 
+       (2015, pending publication)."""
+
+    homepage = "http://bioconductor.org/packages/release/bioc/html/acde.html" 
+    url      = "https://git.bioconductor.org/packages/acde"
+
+    version('1.6.0', ,git='https://git.bioconductor.org/packages/acde', commit='244c81f435a077bf7895ea565fa6695e8b079f67')
+
+    depends_on('r-boot', type=('build', 'run'))
+
