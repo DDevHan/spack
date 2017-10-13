@@ -44,4 +44,3 @@ class RAcde(RPackage):
 
     depends_on('r@3.4.0:3.4.9', when='@1.6.0')
     depends_on('r-boot', type=('build', 'run'))
-
