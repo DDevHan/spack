@@ -22,23 +22,7 @@
 # License along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
-#
-# This is a template package file for Spack.  We've put "FIXME"
-# next to all the things you'll want to change. Once you've handled
-# them, you can save this file and test your package like this:
-#
-#     spack install r-acde
-#
-# You can edit this file again by typing:
-#
-#     spack edit r-acde
-#
-# See the Spack documentation for more information on packaging.
-# If you submit this package back to Spack as a pull request,
-# please first remove this boilerplate and all FIXME comments.
-#
 from spack import *
-
 
 class RAcde(RPackage):
     """This package provides a multivariate inferential analysis method 
@@ -58,5 +42,6 @@ class RAcde(RPackage):
 
     version('1.6.0', ,git='https://git.bioconductor.org/packages/acde', commit='244c81f435a077bf7895ea565fa6695e8b079f67')
 
+    depends_on('r@3.4.0:3.4.9', when='@1.6.0')
     depends_on('r-boot', type=('build', 'run'))
 
