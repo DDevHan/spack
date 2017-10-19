@@ -47,7 +47,6 @@ class Scipion(Package):
     depends_on('libxext')
     depends_on('libxml2')
     depends_on('readline')
-    depends_on('openmpi')
     depends_on('libxscrnsaver')
     depends_on('gsl')
     depends_on('libx11')
