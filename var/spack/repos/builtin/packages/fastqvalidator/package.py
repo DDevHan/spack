@@ -40,6 +40,9 @@ class Fastqvalidator(MakefilePackage):
         commit='9db9c23e176a6ce6f421a3c21ccadedca892ac0c'
     )
 
+
+    depends_on('zlib')
+
     @property
     def build_targets(self):
         return ['LIB_PATH_GENERAL={0}'.format(
