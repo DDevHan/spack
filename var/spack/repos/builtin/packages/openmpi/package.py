@@ -234,6 +234,12 @@ class Openmpi(AutotoolsPackage):
             libraries, root=self.prefix, shared=True, recurse=True
         )
 
+    def setup_environment(self, spack_env, run_env):
+        spack_env.prepend_path('LIBRARY_PATH',
+                             join_path(self.spec['libfabric'].prefix, 'lib'), when='fabrics=libfabric')
+        spack_env.prepend_path('LD_LIBRARY_PATH',
+                             join_path(self.spec['libfabric'].prefix, 'lib'), when='fabrics=libfabric')
+
     def setup_dependent_environment(self, spack_env, run_env, dependent_spec):
         spack_env.set('MPICC',  join_path(self.prefix.bin, 'mpicc'))
         spack_env.set('MPICXX', join_path(self.prefix.bin, 'mpic++'))
@@ -309,6 +315,7 @@ class Openmpi(AutotoolsPackage):
 
         if 'libfabric' in self.fabrics:
             config_args.append('--with-libfabric={0}'.format(spec['libfabric'].prefix))
+            config_args.append('--with-libfabric-libdir={0}'.format(join_path(spec['libfabric'].prefix, 'lib')))
 
         # Hwloc support
         if spec.satisfies('@1.5.2:'):
