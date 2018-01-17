@@ -217,7 +217,7 @@ class Openmpi(AutotoolsPackage):
     conflicts('fabrics=pmi', when='@:1.5.4')  # PMI support was added in 1.5.5
     conflicts('fabrics=mxm', when='@:1.5.3')  # MXM support was added in 1.5.4
     conflicts('fabrics=libfabric', when='@:1.8')  # libfabric support was added in 1.10.0 
-    #It may be worth considering making libfabric an exclusive fabrics choice
+    # It may be worth considering making libfabric an exclusive fabrics choice
 
     def url_for_version(self, version):
         url = "http://www.open-mpi.org/software/ompi/v{0}/downloads/openmpi-{1}.tar.bz2"
