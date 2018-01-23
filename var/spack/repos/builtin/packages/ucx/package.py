@@ -33,3 +33,5 @@ class Ucx(AutotoolsPackage):
     url      = "https://github.com/openucx/ucx/releases/download/v1.2.1/ucx-1.2.1.tar.gz"
 
     version('1.2.1', '697c2fd7912614fb5a1dadff3bfa485c')
+
+    depends_on('numactl')
