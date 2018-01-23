@@ -34,7 +34,11 @@ class Libipathverbs(AutotoolsPackage):
     homepage = "http://openfabrics.org"
     url      = "http://downloads.openfabrics.org/libipathverbs/libipathverbs-1.3.tar.gz"
 
+    depends_on('autoconf')
+    depends_on('automake')
+    depends_on('libtool')
     depends_on('rdma-core+devel', type=('build', 'link'))
 
     version('1.3', '740692ea205c49f7b2be9f81207474cf')
+    version('2014-07-23', git='https://github.com/01org/libipathverbs.git', commit='8291d48')
 
