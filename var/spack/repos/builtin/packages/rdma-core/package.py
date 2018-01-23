@@ -35,6 +35,8 @@ class RdmaCore(CMakePackage):
 
     version('13', '6b072b4307d1cfe45eba4373f68e2927')
 
+    variant('devel', default=False, description="Install headers normally distributed with devel packages")
+
     depends_on('libnl')
 
     @run_before('cmake')
@@ -42,3 +44,9 @@ class RdmaCore(CMakePackage):
         if not (sys.platform.startswith('freebsd') or
                 sys.platform.startswith('linux')):
             raise InstallError("rdma-core requires FreeBSD or Linux")
+
+    @run_after('install')
+    @when('+devel')
+    def install_headers(self):
+        install('libibverbs/driver.h', self.spec.prefix.include.infiniband)
+        install('libibverbs/marshall.h', self.spec.prefix.include.infiniband)
