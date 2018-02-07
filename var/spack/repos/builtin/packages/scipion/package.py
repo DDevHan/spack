@@ -23,8 +23,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
 from spack import *
-import os.path
-
+import distutils.dir_util
 
 class Scipion(Package):
     """Scipion is an image processing framework to obtain 3D models of
@@ -37,10 +36,9 @@ class Scipion(Package):
 
     variant('matlab', default=False, description='Compile with Matlab dependency')
     variant('cuda', default=False, description='Compile with cuda dependency')
-
+    
     depends_on('cmake', type='build')
     depends_on('jdk', type=('build', 'run'))
-    depends_on('python', type=('build', 'run'))
     depends_on('py-scipy', type=('build', 'run'))
     depends_on('libxft')
     depends_on('openssl')
@@ -56,37 +54,40 @@ class Scipion(Package):
     depends_on('matlab', when='+matlab')
     depends_on('cuda', when='+cuda')
 
-    def patch(self):
+    phases = ['configure', 'edit', 'install']
+    
+    def configure(self, spec, prefix):
+        scipion = Executable('./scipion')
+        scipion('config')
+    
+    def edit(self, spec, prefix):
         with working_dir('config'):
-            # copy host.conf, scipion.conf, and protocol.conf to our config dir
-            install(join_path(os.path.dirname(__file__), "hosts.conf"),
-                    "hosts.conf")
-            install(join_path(os.path.dirname(__file__), "protocols.conf"),
-                    "protocols.conf")
-            install(join_path(os.path.dirname(__file__), "scipion.conf"),
-                    "scipion.conf")
             config = FileFilter('scipion.conf')
-            config.filter('CC =', 'CC = %s' % spack_cc)
-            config.filter('CXX =', 'CXX = %s ' % spack_cxx)
-            config.filter('LINKERFORPROGRAMS =', 'LINKERFORPROGRAMS = %s' % spack_cxx)
-            config.filter('MPI_CC =', 'MPI_CC = %s' % self.spec['mpi'].mpicc)
-            config.filter('MPI_CXX =', 'MPI_CXX = %s' % self.spec['mpi'].mpicxx)
-            config.filter('MPI_LINKERFORPROGRAMS =', 'MPI_LINKERFORPROGRAMS = %s' % self.spec['mpi'].mpicxx)
-            config.filter('MPI_LIBDIR =', 'MPI_LIBDIR = %s' % self.spec['mpi'].prefix.lib)
-            config.filter('MPI_INCLUDE =', 'MPI_INCLUDE = %s' % self.spec['mpi'].prefix.include)
-            config.filter('MPIR_BINDIR =', 'MPI_BINDIR = %s' % self.spec['mpi'].prefix.bin)
-            config.filter('JAVA_HOME =', 'JAVA_HOME = %s' % self.spec['jdk'].prefix)
-            config.filter('JAVA_BINDIR =', 'JAVA_BINDIR = %s' % self.spec['jdk'].prefix.bin)
+            config.filter('CC = .*', 'CC = %s' % spack_cc)
+            config.filter('CXX = .*', 'CXX = %s' % spack_cxx)
+            config.filter('LINKERFORPROGRAMS = .*', 'LINKERFORPROGRAMS = %s' % spack_cxx)
+            config.filter('MPI_CC = .*', 'MPI_CC = %s' % self.spec['mpi'].mpicc)
+            config.filter('MPI_CXX = .*', 'MPI_CXX = %s' % self.spec['mpi'].mpicxx)
+            config.filter('MPI_LINKERFORPROGRAMS = .*', 'MPI_LINKERFORPROGRAMS = %s' % self.spec['mpi'].mpicxx)
+            config.filter('MPI_LIBDIR = .*', 'MPI_LIBDIR = %s' % self.spec['mpi'].prefix.lib)
+            config.filter('MPI_INCLUDE = .*', 'MPI_INCLUDE = %s' % self.spec['mpi'].prefix.include)
+            config.filter('MPI_BINDIR = .*', 'MPI_BINDIR = %s' % self.spec['mpi'].prefix.bin)
+            config.filter('JAVA_HOME = .*', 'JAVA_HOME = %s' % self.spec['jdk'].prefix)
             if '+cuda' in self.spec:
-                config.filter('CUDA_LIB =', 'CUDA_LIB = %s' %self.spec['cuda'].prefix.lib)
-                config.filter('CUDA_BIN =', 'CUDA_BIN = %s' % self.spec['cuda'].prefix.bin)
-                config.filter('CUDA = False', 'CUDA = True')
+                config.filter('CUDA_LIB = .*', 'CUDA_LIB = %s' % self.spec['cuda'].prefix.lib)
+                config.filter('CUDA_BIN = .*', 'CUDA_BIN = %s' % self.spec['cuda'].prefix.bin)
+                config.filter('CUDA = .*', 'CUDA = TRUE')
             if '+matlab' in self.spec:
-                config.filter('MATLAB_DIR =', 'MATLAB_DIR = %s' % self.spec['matlab'].prefix)
-                config.filter('MATLAB = False', 'MATLAB = True')
+                confif.filter('MATLAB_DIR = .*', 'MATLAB = %s' % self.spec['matlab'].prefix)
+                config.filter('MATLAB = .*', 'MATLAB = TRUE')
 
     def install(self, spec, prefix):
         # The --no-opencv and --no-scipy arguments just means we will be using
         # our own opencv and scipy installation.
-        installer = Executable('./scipion')
-        installer('install', '--no-scipy', '--no-opencv')
+        with working_dir(self.stage.source_path):
+            installer = Executable('./scipion')
+            installer('install', '--no-scipy', '--no-opencv')
+            distutils.dir_util.copy_tree(".", prefix)
+
+    def setup_environment(self, spack_env, run_env):
+        run_env.prepend_path('PATH', self.spec.prefix)
