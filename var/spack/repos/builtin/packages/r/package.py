@@ -22,7 +22,9 @@
 # License along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
+import os
 import shutil
+
 from spack import *
 
 
@@ -88,6 +90,10 @@ class R(AutotoolsPackage):
 
     patch('zlib.patch', when='@:3.3.2')
 
+    filter_compiler_wrappers(
+        'Makeconf', relative_root=os.path.join('rlib', 'R', 'etc')
+    )
+
     @property
     def etcdir(self):
         return join_path(prefix, 'rlib', 'R', 'etc')
@@ -128,26 +134,6 @@ class R(AutotoolsPackage):
         src_makeconf = join_path(self.etcdir, 'Makeconf')
         dst_makeconf = join_path(self.etcdir, 'Makeconf.spack')
         shutil.copy(src_makeconf, dst_makeconf)
-
-    @run_after('install')
-    def filter_compilers(self):
-        """Run after install to tell the configuration files and Makefiles
-        to use the compilers that Spack built the package with.
-
-        If this isn't done, they'll have CC and CXX set to Spack's generic
-        cc and c++. We want them to be bound to whatever compiler
-        they were built with."""
-
-        kwargs = {'ignore_absent': True, 'backup': False, 'string': True}
-
-        filter_file(env['CC'], self.compiler.cc,
-                    join_path(self.etcdir, 'Makeconf'), **kwargs)
-        filter_file(env['CXX'], self.compiler.cxx,
-                    join_path(self.etcdir, 'Makeconf'), **kwargs)
-        filter_file(env['F77'], self.compiler.f77,
-                    join_path(self.etcdir, 'Makeconf'), **kwargs)
-        filter_file(env['FC'], self.compiler.fc,
-                    join_path(self.etcdir, 'Makeconf'), **kwargs)
 
     # ========================================================================
     # Set up environment to make install easy for R extensions.
