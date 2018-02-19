@@ -25,15 +25,24 @@
 from spack import *
 
 
-class Libepoxy(AutotoolsPackage):
-    """Epoxy is a library for handling OpenGL function pointer management for
-    you."""
-    homepage = "https://github.com/anholt/libepoxy"
-    url      = "https://github.com/anholt/libepoxy/releases/download/1.4.3/libepoxy-1.4.3.tar.xz"
-    list_url = "https://github.com/anholt/libepoxy/releases"
+class Afni(MakefilePackage):
+    """AFNI (Analysis of Functional NeuroImages) is a set of C programs for
+       processing, analyzing, and displaying functional MRI (FMRI) data - a
+       technique for mapping human brain activity."""
 
-    version('1.4.3', 'af4c3ce0fb1143bdc4e43f85695a9bed')
-    version('1.3.1', '96f6620a9b005a503e7b44b0b528287d')
+    homepage = "https://afni.nimh.nih.gov/"
+    url      = "https://afni.nimh.nih.gov/pub/dist/tgz/afni_src.tgz"
 
-    depends_on('meson@0.42.0')
-    depends_on('mesa')
+    version('2017-9-27', '0123456789abcdef0123456789abcdef')
+
+    depends_on('motif')
+    depends_on('tcsh')
+    depends_on('libxp')
+    depends_on('gsl')
+    depends_on('py-pyqt')
+    depends_on('r', type=('build', 'run'))
+    depends_on('libpng')
+    depends_on('xorg-server')
+
+    def build(self, spec, prefix):
+        make('-f', 'Makefile_linux_g++')

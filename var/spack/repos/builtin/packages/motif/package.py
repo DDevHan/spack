@@ -26,20 +26,15 @@ from spack import *
 
 
 class Motif(AutotoolsPackage):
-    """"
-    Motif - Graphical user interface (GUI)
-    specification and the widget toolkit
-    """
-    homepage = "http://motif.ics.com/"
-    url = "http://cfhcable.dl.sourceforge.net/project/motif/Motif 2.3.8 Source Code/motif-2.3.8.tar.gz"
+    """Motif is a freely available source code distribution for the Motif user interface component toolkit."""
 
-    version('2.3.8', '7572140bb52ba21ec2f0c85b2605e2b1')
+    homepage = "https://sourceforge.net/projects/motif/"
+    url      = "https://downloads.sourceforge.net/project/motif/Motif%202.3.7%20Source%20Code/motif-2.3.7.tar.gz"
 
-    depends_on("flex")
-    depends_on("libx11")
-    depends_on("libxt")
-    depends_on("libxext")
-    depends_on("libxft")
-    depends_on("libxcomposite")
-    depends_on("libxfixes")
-    depends_on("xbitmaps")
+    version('2.3.7', 'ddca8caabf70b144bef5d4e4e818b76b')
+
+    depends_on('libxext')
+    depends_on('libxt')
+    depends_on('libxft')
+    depends_on('xbitmaps')
+    depends_on('flex')
