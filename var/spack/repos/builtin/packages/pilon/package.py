@@ -23,26 +23,38 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
 from spack import *
-import glob
+from shutil import copyfile
+import os.path
 
 
-class Vardictjava(Package):
-    """VarDictJava is a variant discovery program written in Java.
-    It is a partial Java port of VarDict variant caller."""
+class Pilon(Package):
+    """Pilon is an automated genome assembly improvement and variant
+    detection tool."""
 
-    homepage = "https://github.com/AstraZeneca-NGS/VarDictJava"
-    url      = "https://github.com/AstraZeneca-NGS/VarDictJava/releases/download/v1.5.1/VarDict-1.5.1.tar"
+    homepage = "https://github.com/broadinstitute/pilon"
+    url      = "https://github.com/broadinstitute/pilon/releases/download/v1.22/pilon-1.22.jar"
 
-    version('1.5.1', '8c0387bcc1f7dc696b04e926c48b27e6')
-    version('1.4.4', '6b2d7e1e5502b875760fc9938a0fe5e0')
+    version('1.22', '3c45568dc1b878a9a0316410ec62ab04', expand=False)
+    version('1.13', '9e96b4cf4ea595b1996c7e9ca76498b5', expand=False)
 
-    depends_on('java@8:', type='run')
+    depends_on('java@1.7:', type='run')
 
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
-        install('bin/VarDict', prefix.bin)
+        jar_file = 'pilon-{0}.jar'.format(self.version.dotted)
+        install(jar_file, prefix.bin)
 
-        mkdirp(prefix.lib)
-        files = [x for x in glob.glob("lib/*jar")]
-        for f in files:
-            install(f, prefix.lib)
+        # Set up a helper script to call java on the jar file,
+        # explicitly codes the path for java and the jar file.
+        script_sh = join_path(os.path.dirname(__file__), "pilon.sh")
+        script = join_path(prefix.bin, "pilon")
+        copyfile(script_sh, script)
+        set_executable(script)
+
+        # Munge the helper script to explicitly point to java and the
+        # jar file.
+        java = join_path(self.spec['java'].prefix, 'bin', 'java')
+        kwargs = {'ignore_absent': False, 'backup': False, 'string': False}
+        filter_file('^java', java, script, **kwargs)
+        filter_file('pilon-{0}.jar', join_path(prefix.bin, jar_file),
+                    script, **kwargs)

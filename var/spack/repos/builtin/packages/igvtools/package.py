@@ -23,26 +23,38 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
 from spack import *
-import glob
+from shutil import copyfile
+import os
 
 
-class Vardictjava(Package):
-    """VarDictJava is a variant discovery program written in Java.
-    It is a partial Java port of VarDict variant caller."""
+class Igvtools(Package):
+    """IGVTools suite of command-line utilities for preprocessing data
+    files"""
 
-    homepage = "https://github.com/AstraZeneca-NGS/VarDictJava"
-    url      = "https://github.com/AstraZeneca-NGS/VarDictJava/releases/download/v1.5.1/VarDict-1.5.1.tar"
+    homepage = "https://software.broadinstitute.org/software/igv/home"
+    url      = "http://data.broadinstitute.org/igv/projects/downloads/2.3/igvtools_2.3.98.zip"
 
-    version('1.5.1', '8c0387bcc1f7dc696b04e926c48b27e6')
-    version('1.4.4', '6b2d7e1e5502b875760fc9938a0fe5e0')
+    version('2.3.98', '17ed12a213cd9cdaeb2f2a5c56d84bc4')
 
-    depends_on('java@8:', type='run')
+    depends_on('java@8:')
 
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
-        install('bin/VarDict', prefix.bin)
+        jar_file = 'igvtools.jar'
+        install(jar_file, prefix.bin)
+        install_tree('genomes', prefix.genomes)
 
-        mkdirp(prefix.lib)
-        files = [x for x in glob.glob("lib/*jar")]
-        for f in files:
-            install(f, prefix.lib)
+        # Set up a helper script to call java on the jar file,
+        # explicitly codes the path for java and the jar file.
+        script_sh = join_path(os.path.dirname(__file__), "igvtools.sh")
+        script = join_path(prefix.bin, "igvtools")
+        copyfile(script_sh, script)
+        set_executable(script)
+
+        # Munge the helper script to explicitly point to java and the
+        # jar file.
+        java = join_path(self.spec['jdk'].prefix, 'bin', 'java')
+        kwargs = {'ignore_absent': False, 'backup': False, 'string': False}
+        filter_file('^java', java, script, **kwargs)
+        filter_file(jar_file, join_path(prefix.bin, jar_file),
+                    script, **kwargs)
