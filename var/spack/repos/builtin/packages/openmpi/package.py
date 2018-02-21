@@ -174,7 +174,7 @@ class Openmpi(AutotoolsPackage):
     patch('configure.patch', when="@1.10.1")
     patch('fix_multidef_pmi_class.patch', when="@2.0.0:2.0.1")
 
-    fabrics = ('psm', 'psm2', 'pmi', 'verbs', 'mxm', 'libfabric')
+    fabrics = ('psm', 'psm2', 'pmi', 'verbs', 'mxm', 'ucx', 'libfabric')
 
     variant(
         'fabrics',
@@ -198,7 +198,6 @@ class Openmpi(AutotoolsPackage):
     variant('thread_multiple', default=False,
             description='Enable MPI_THREAD_MULTIPLE support')
     variant('cuda', default=False, description='Enable CUDA support')
-    variant('ucx', default=False, description='Enable UCX support')
 
     provides('mpi')
     provides('mpi@:2.2', when='@1.6.5')
@@ -210,7 +209,7 @@ class Openmpi(AutotoolsPackage):
     depends_on('hwloc +cuda', when='+cuda')
     depends_on('java', when='+java')
     depends_on('sqlite', when='+sqlite3@:1.11')
-    depends_on('ucx', when='+ucx')
+    depends_on('ucx', when='fabrics=ucx')
     depends_on('libfabric', when='fabrics=libfabric')
 
     conflicts('+cuda', when='@:1.6')  # CUDA support was added in 1.7
