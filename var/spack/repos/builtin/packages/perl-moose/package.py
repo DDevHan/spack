@@ -29,9 +29,9 @@ class PerlMoose(PerlPackage):
     """A postmodern object system for Perl 5"""
 
     homepage = "http://search.cpan.org/~ether/Moose-2.2006/lib/Moose.pm"
-    url      = "http://search.cpan.org/CPAN/authors/id/E/ET/ETHER/Moose-2.2006.tar.gz"
+    url      = "http://search.cpan.org/CPAN/authors/id/E/ET/ETHER/Moose-2.2010.tar.gz"
 
-    version('2.2006', '929c6b3877a6054ef617cf7ef1e220b5')
+    version('2.2010', '636238ac384818ee1e92eff6b9ecc50a')
 
     depends_on('perl-cpan-meta-check', type=('build', 'run'))
     depends_on('perl-test-cleannamespaces', type=('build', 'run'))
