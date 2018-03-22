@@ -26,9 +26,9 @@ from spack import *
 
 
 class PerlModuleRuntime(PerlPackage):
-    """Runtime module handling"""
+    """Runtime module handling."""
 
-    homepage = "http://search.cpan.org/~zefram/Module-Runtime/lib/Module/Runtime.pm"
+    homepage = "http://search.cpan.org/~zefram/Module-Runtime-0.016/lib/Module/Runtime.pm"
     url      = "http://search.cpan.org/CPAN/authors/id/Z/ZE/ZEFRAM/Module-Runtime-0.016.tar.gz"
 
     version('0.016', 'd3d47222fa2e3dfcb4526f6cc8437b20')
