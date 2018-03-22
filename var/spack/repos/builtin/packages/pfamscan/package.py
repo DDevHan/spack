@@ -34,7 +34,7 @@ class Pfamscan(Package):
 
     version('1.6', '652b22f19038320fd925db4937134305')
 
-    depends_on('hmmer')
+    depends_on('hmmer@3.1b2')
     depends_on('perl-moose')
     depends_on('perl-bio-perl')
     depends_on('perl-ipc-run')
