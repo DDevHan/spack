@@ -32,3 +32,5 @@ class PerlTestDeep(PerlPackage):
     url      = "http://search.cpan.org/CPAN/authors/id/R/RJ/RJBS/Test-Deep-1.127.tar.gz"
 
     version('1.127', 'eeafe5795ba20ba051a1423f4fa86dd6')
+
+    depends_on('perl-scalar-list-utils')
