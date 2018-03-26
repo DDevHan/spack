@@ -26,24 +26,47 @@ from spack import *
 
 
 class Pfamscan(Package):
-    """pfam_scan.pl is a Perl script calling HMMER v3 to search a FASTA
-    file against a library of Pfam HMMs."""
+    """PfamScan is used to search a FASTA sequence against a library of Pfam
+       HMM"""
 
-    homepage = "http://www.sanger.ac.uk/science/tools/pfam"
-    url      = "http://ftp.ebi.ac.uk/pub/databases/Pfam/Tools/PfamScan.tar.gz"
+    homepage = "http://www.ebi.ac.uk/Tools/pfa/pfamscan/"
+    url      = "http://ftp.ebi.ac.uk/pub/databases/Pfam/Tools/OldPfamScan/PfamScan1.5/PfamScan.tar.gz"
 
-    version('1.6', '652b22f19038320fd925db4937134305')
+    version('1.5', '42b2d4dead971f030d5e4bf12105a8bd')
 
-    depends_on('hmmer@3.1b2')
-    depends_on('perl-moose')
-    depends_on('perl-bio-perl')
-    depends_on('perl-ipc-run')
+    depends_on('perl-ipc-run', type=('build', 'run'))
+    depends_on('perl-bio-perl', type=('build', 'run'))
+    depends_on('perl-moose', type=('build', 'run'))
+    depends_on('hmmer')
+
+    resource(
+        name='Pfam-A.hmm',
+        url='ftp://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/Pfam-A.hmm.gz',
+        sha256='33f2dfab4d695fc3d2337119debbfcd8c801aaf8e2c312bd738c105a84007973',
+        destination='data'
+    )
+
+    resource(
+        name='Pfam-A.hmm.dat',
+        url='ftp://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/Pfam-A.hmm.dat.gz',
+        sha256='512b96c6e3c95cdd78776d8524be888f44199533361348e11330e4718c9e500b',
+        destination='data'
+    )
+
+    resource(
+        name='active_site.dat',
+        url='ftp://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/active_site.dat.gz',
+        sha256='fe6ebb90a0c3f5fb6e92b566d2e3e2f59f5eba5aaf96d4e4db8047e54f4da1b2',
+        destination='data'
+    )
 
     def install(self, spec, prefix):
         install_tree('Bio', prefix.bin.Bio)
         install('ChangeLog', prefix.bin)
         install('pfam_scan.pl', prefix.bin)
         install('README', prefix.bin)
+        #hmmpress = which('hmmpress')
+        #hmmpress(join_path(self.prefix.data, 'Pfam-A.hmm'))
 
     def setup_environment(self, spack_env, run_env):
         run_env.prepend_path('PERL5LIB', prefix.bin)
