@@ -65,8 +65,8 @@ class Xgboost(Package):
             cmake('-DUSE_CUDA=ON')
             # get back to xgboost dir to make
             # normally this should not be necessary (a bug in code?)
-            os.chdir(str(self.stage.source_path))
-        make()
+        with working_dir(self.stage.source_path):
+            make()
 
         mkdir(prefix.bin)
         install('xgboost', prefix.bin)
@@ -79,7 +79,7 @@ class Xgboost(Package):
                 # Default is ~/.m2, and directory structure goes
                 # like ~/.m2/repository/ml/dmlc/...
                 # as opposed to m2/ml/dmlc/...
-                mvn_repo = str(self.stage.source_path) + '/jvm-packages/m2'
+                mvn_repo = join_path(self.stage.source_path, 'jvm-packages', 'm2')
                 drepo = '-Dmaven.repo.local=' + mvn_repo
                 # compile with maven
                 mvn = which('mvn')
@@ -91,8 +91,6 @@ class Xgboost(Package):
             # save xgboost jars under package prefix
             ver = str(self.spec.version)
             for xgtype in ['', '-spark', '-flink', '-example']:
-                ujars = glob.glob(mvn_repo + '/ml/dmlc/xgboost4j' + xgtype +
-                                  '/' + ver + '/*.jar')
+                ujars = glob.glob(join_path(mvn_repo, 'ml', 'dmlc', 'xgboost4j' + xgtype,ver,'*.jar'))
                 for jar in ujars:
-                    install(jar, str(spec.prefix) + '/' +
-                            os.path.basename(jar))
+                    install(jar, prefix)
