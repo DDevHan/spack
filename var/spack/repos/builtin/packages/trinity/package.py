@@ -49,10 +49,34 @@ class Trinity(MakefilePackage):
     depends_on("jellyfish")
     depends_on("salmon")
     depends_on("perl+threads")
+    depends_on("autoconf")
+    depends_on("automake")
+    depends_on("libtool")
+
+ #   def setup_environment(self, spack_env, run_env):
+ #       spack_env.append_flags('CPPFLAGS', self.compiler.openmp_flag)
+ #       spack_env.append_flags('PKG_CFLAGS', self.compiler.openmp_flag)
+ #       spack_env.append_flags('AM_CXXFLAGS', self.compiler.openmp_flag)
+ #       spack_env.append_flags('CXXFLAGS', self.compiler.openmp_flag)
+ #       spack_env.append_flags('CFLAGS', self.compiler.openmp_flag)
 
     def build(self, spec, prefix):
-        make
-        make("plugins")
+        make()
+        cd(join_path(self.stage.source_path,"trinity-plugins"))
+        tar = which('tar')
+        tar('xzvf', 'ParaFly-0.1.0.tar.gz')
+        cd(join_path(self.stage.source_path,"trinity-plugins","ParaFly-0.1.0"))
+        configure("CPPFLAGS=-fopenmp", "CXXFLAGS=-fopenmp")
+        make("CPPFLAGS=-fopenmp")
+        cd('../')
+        make("trinity_essentials -fopenmp")
+        make("plugins -fopenmp")
+
+    @property
+    def build_targets(self):
+        targets = []
+        targets.append('CPPFLAGS = {0}'.format(self.compiler.openmp_flag))
+        return targets
 
     def install(self, spec, prefix):
         copy_tree('.', prefix.bin, preserve_symlinks=1)
@@ -73,3 +97,15 @@ class Trinity(MakefilePackage):
 
     def setup_environment(self, spack_env, run_env):
         run_env.set('TRINITY_HOME', self.prefix.bin)
+
+
+#    @property
+#    def make_defs(self):
+#
+#        make_defs = ['CXX={0}'.format(spack_cxx)]
+#        make_defs += [self.compiler.openmp_flag]
+#        make_defs += ['-e CPPFLAGS=-fopenmp']
+#
+#        return make_defs
+
+
