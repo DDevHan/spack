@@ -49,6 +49,18 @@ class Cryosparc(Package):
             description='The license ID.'
             )
 
+    variant('output',
+            default=join_path(os.path.expanduser('~'), 'cryosparc_output'),
+            values=lambda x: True, # Anything goes as a path
+            description='The output location for cryosparc.'
+            )
+
+    variant('ssd',
+            default=join_path(os.path.expanduser('~'), 'cryosparc_ssd_caching'),
+            values=lambda x: True, # Anything goes as a key
+            description='The SSD caching location for cryososparc.'
+            )
+
     def url_for_version(self, version):
         return "file://{0}/cryosparc-{1}.tar.gz".format(os.getcwd(), version)
 
@@ -57,5 +69,15 @@ class Cryosparc(Package):
     def install(self, spec, prefix):
         if not which('nvidia-smi'):
             raise SpackError('Need nvidia-smi. Installation terminated.')
-        run_install = Executable('./install.sh')
-        run_install('--license-id='+spec.variants['license'].values)
+        output_location = os.path.abspath(spec.variants['output'].value)
+        ssd_caching_location = os.path.abspath(spec.variants['ssd'].value)
+        mkdirp(output_location)
+        mkdirp(ssd_caching_location)
+        install_answer = ['1\n', output_location+'\n', '\n', '\n', '\n', ssd_caching_location+'\n', '\n', '2\n']
+        install_answer_input = 'spack-config.in'
+        with working_dir(self.stage.source_path):
+            with open(install_answer_input, 'w') as f:
+                f.writelines(install_answer)
+            with open(install_answer_input, 'r') as f:
+                run_install = Executable('./install.sh')
+                run_install('--license-id='+spec.variants['license'].value, input=f)
