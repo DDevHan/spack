@@ -40,49 +40,35 @@
 from spack import *
 import pdb
 
-class BlasrLibcpp(CMakePackage):
+class BlasrLibcpp(Package):
     """Blasr_libcpp is a library used by blasr and other executables such as samtoh5, loadPulses for analyzing PacBio sequences."""
 
-    # FIXME: Add a proper url for your package's homepage here.
     homepage = "https://github.com/PacificBiosciences/blasr_libcpp"
     url      = "https://github.com/PacificBiosciences/blasr_libcpp/tarball/b038971c97eb5403b982c177eb44e488d25e9994"
 
     version('038971c97eb5403b982c177eb44e488d25e9994', 'bd75541ab5e0a53c62f534ee73746878')
 
-    # FIXME: Add dependencies if required.
     depends_on('pbbam')
     depends_on('hdf5+cxx@1.8.19')
     depends_on('pkgconfig')
+    depends_on('python')
 
-    #BUILD_TESTS = FALSE
+    phases = ['configure','install']
 
-    #if BUILD_TESTS = False
-    def patch(self):    
-        filter_file(r'^add_subdirectory', '#', 'CMakeLists.txt')
-        filter_file(r'^enable_testing*', '#', 'CMakeLists.txt')
-	filter_file(r'^file.GLOB_RECURSE TEST_CPP*', '#', 'CMakeLists.txt')
-	filter_file(r'^add_executable.libcpptest ..TEST_CPP..*', '#', 'CMakeLists.txt')
-	filter_file(r'^target_include_directories.libcpptest PUBLIC .{BLAS*', '#', 'CMakeLists.txt')
-	filter_file(r'^target_link_libraries.libcpptest gtest_main libcpp*', '#', 'CMakeLists.txt')
-	filter_file(r'^add_test.libcpptest*', '#', 'CMakeLists.txt')
-	filter_file(r'^set_target_properties.libcpptest*', '#', 'CMakeLists.txt')
-	#filter_file(r'^if .LOCAL_LINKER*', '#', 'CMakeLists.txt')
-	filter_file(r'    set_target_properties.libcpptest*', '#', 'CMakeLists.txt')
-	#filter_file(r'endif*', '#', 'CMakeLists.txt')
-	filter_file(r'add_custom_target.check_lib*', '#', 'CMakeLists.txt')
-	filter_file(r'    COMMAND libcpptest ..gtest*', '#', 'CMakeLists.txt')
-	filter_file(r'    WORKING_DIRECTORY*', '#', 'CMakeLists.txt')
-	    #pdb.set_trace()
-        filter_file(r'    add_subdirectory.*', '#', 'cmake/blasrlibcpp-dependencies.cmake')
-	    #pdb_break.py()
+    def configure(self, spec, prefix):
+	configure_args=[]
+	configure_args.append('PBBAM_INC={0}'.format(self.spec['pbbam'].prefix))
+	configure_args.append('PBBAM_LIB={0}'.format(self.spec['pbbam'].prefix.lib))
+	configure_args.append('HDF5_INC={0}'.format(self.spec['hdf5'].prefix))
+	configure_args.append('HDF5_LIB={0}'.format(self.spec['hdf5'].prefix.lib))
+	python('configure.py', *configure_args)
+
     def install(self, spec, prefix):
-#       install('spack-build/liblibcpp.a', join_path(prefix.lib, 'liblibcpp.a'))
-	install_tree('hdf', prefix.hdf)
+	make()
 	install_tree('alignment', prefix.alignment)
+	install_tree('hdf', prefix.hdf)
 	install_tree('pbdata', prefix.pbdata)
+
     def setup_dependent_environment(self, spack_env, run_env, dependent_spec):
 	spack_env.set('HDF5_INCLUDE_DIRS', self.prefix.hdf)
-#	spack_env.set('HDF5_LIBRARIES', self.spec.lib)
-        #install_tree('spack-build/lib', prefix.lib)
-        #install_tree('include/pbbam', prefix.include.pbbam)
 
