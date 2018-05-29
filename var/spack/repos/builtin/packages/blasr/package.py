@@ -25,7 +25,8 @@
 from spack import *
 
 
-class Blasr(CMakePackage):
+class Blasr(Package):
+    generator = 'Ninja'
     """The PacBio long read aligner."""
 
     homepage = "https://github.com/PacificBiosciences/blasr/wiki"
@@ -44,34 +45,22 @@ class Blasr(CMakePackage):
     depends_on('ninja')
     depends_on('blasr-libcpp')
     
-    def cmake_args(self):
-	cmake_args = [
-            "-DPacBioBAM_LIBRARIES={0}".format(self.spec['pbbam'].prefix.lib), 
-	    "-DPacBioBAM_INCLUDE_DIRS={0}".format(self.spec['pbbam'].prefix.include),
-	    "-DHDF5_CPP={0}".format(self.spec['blasr-libcpp'].prefix.hdf),
-	    "-DHDF5_CPP={0}".format(self.spec['blasr-libcpp'].prefix.alignment),
-	    "-DHDF5_CPP={0}".format(self.spec['blasr-libcpp'].prefix.pbdata),
-	    "-DBLASR_SOURCE_DIR={0}".format(self.stage.source_path),
-	    "-DHDF5_INCLUDE_DIRS={0}".format(self.spec['blasr-libcpp'].prefix.hdf),
-	    "-DBoost_INCLUDE_DIRS={0}".format(self.spec['boost'].prefix)
-		]
-	cmake_args.append("-D__find_git_sha1=YES")
-    		
+    phases = ['configure','install']
 
-        return cmake_args
-    def patch(self):
-	filter_file(r'^if...find_git_sha1.$', '#', 'cmake/blasr-gitsha1.cmake')
-	filter_file(r'    return..$', '#', 'cmake/blasr-gitsha1.cmake')
-	filter_file(r'^endif..$', '#', 'cmake/blasr-gitsha1.cmake')
-	filter_file(r'^.*if .NOT res EQUAL 0.$', '#', 'cmake/blasr-gitsha1.cmake')
-	filter_file(r'.*message.FATAL_ERROR .Could not determine git sha1 via .git describe ..always ..dirty....', '#', 'cmake/blasr-gitsha1.cmake')
-	filter_file(r'    endif..$', '#', 'cmake/blasr-gitsha1.cmake')
-#	filter_file(r'^.*blasr-config.*$', '#', 'CMakeLists.txt')
-	filter_file(r'^file\(GLOB HDF5_CPP.*$', 'file(GLOB HDF5_CPP '+self.spec['blasr-libcpp'].prefix+'/hdf/*cpp)', 'CMakeLists.txt')
-	filter_file(r'^file\(GLOB_RECURSE ALIGNMENT_CPP.*$', 'file(GLOB_RECURSE ALIGNMENT_CPP '+self.spec['blasr-libcpp'].prefix+'/alignment/*.cpp)', 'CMakeLists.txt')
-	filter_file(r'^file\(GLOB_RECURSE PBDATA_CPP.*$', 'file(GLOB_RECURSE PBDATA_CPP '+self.spec['blasr-libcpp'].prefix+'/pbdata/*.cpp)', 'CMakeLists.txt')
-	filter_file(r'    \${BLASR_RootDir}/libcpp/hdf.*$', self.spec['blasr-libcpp'].prefix+'/hdf', 'CMakeLists.txt')
-	filter_file(r'    \${BLASR_RootDir}/libcpp/alignment$', self.spec['blasr-libcpp'].prefix+'/alignment', 'CMakeLists.txt')
-	filter_file(r'    \${BLASR_RootDir}/libcpp/pbdata.*$', self.spec['blasr-libcpp'].prefix+'/pbdata', 'CMakeLists.txt')
-        filter_file(r'    \${HDF5_INCLUDE_DIRS}$', self.spec['blasr-libcpp'].prefix+'/hdf', 'CMakeLists.txt')
-	filter_file(r'^set.*find.git.sha1 YES.$', '#', 'cmake/blasr-gitsha1.cmake')
+    def configure(self, spec, prefix):
+	configure_args=[]
+        configure_args.append('LIBPBDATA_INC={0}'.format(self.spec['blasr-libcpp'].prefix.pbdata)) 
+	configure_args.append('LIBPBDATA_LIB={0}'.format(self.spec['blasr-libcpp'].prefix.pbdata))
+	configure_args.append('LIBBLASR_LIB={0}'.format(self.spec['blasr-libcpp'].prefix.alignment))
+	configure_args.append('LIBBLASR_INC={0}'.format(self.spec['blasr-libcpp'].prefix.alignment))
+	configure_args.append('LIBPBIHDF_INC={0}'.format(self.spec['blasr-libcpp'].prefix.hdf))
+	configure_args.append('LIBPBIHDF_LIB={0}'.format(self.spec['blasr-libcpp'].prefix.hdf))
+	configure_args.append('RT_LIBFLAGS={0}'.format(self.spec['blasr-libcpp'].prefix.hdf))
+	configure_args.append('HDF5_INC={0}'.format(self.spec['hdf5'].prefix.include))
+	configure_args.append('--shared')
+#	configure_args.append('HDF5_LIB={0}'.format(self.spec['hdf5'].prefix.lib))
+#	configure_args.append('Boost_INCLUDE_DIRS={0}'.format(self.spec['boost'].prefix))
+    	python('configure.py', *configure_args)
+        
+    def install(self, spec, prefix):
+	make()
