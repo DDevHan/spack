@@ -36,7 +36,7 @@ class Blasr(Package):
             url="https://github.com/PacificBiosciences/blasr/tarball/eab53fd220a05dfd7290962360a6ccce55be9c7c") 
 
     depends_on('ncurses')
-    depends_on('hdf5')
+    depends_on('hdf5+cxx@1.8.12:')
     depends_on('htslib')
     depends_on('zlib')
     depends_on('boost')
@@ -44,23 +44,49 @@ class Blasr(Package):
     depends_on('pkgconfig')
     depends_on('ninja')
     depends_on('blasr-libcpp')
-    
-    phases = ['configure','install']
+
+    phases = ['configure', 'install']
+
+    def setup_environment(self, spack_env, run_env):
+        run_env.prepend_path('LD_LIBRARY_PATH',
+                             self.spec['blasr-libcpp'].prefix.hdf)
+        run_env.prepend_path('LD_LIBRARY_PATH',
+                             self.spec['blasr-libcpp'].prefix.alignment)
+        run_env.prepend_path('LD_LIBRARY_PATH',
+                             self.spec['blasr-libcpp'].prefix.pbdata)
+        run_env.prepend_path('PATH', self.spec.prefix.utils)
 
     def configure(self, spec, prefix):
-	configure_args=[]
-        configure_args.append('LIBPBDATA_INC={0}'.format(self.spec['blasr-libcpp'].prefix.pbdata)) 
-	configure_args.append('LIBPBDATA_LIB={0}'.format(self.spec['blasr-libcpp'].prefix.pbdata))
-	configure_args.append('LIBBLASR_LIB={0}'.format(self.spec['blasr-libcpp'].prefix.alignment))
-	configure_args.append('LIBBLASR_INC={0}'.format(self.spec['blasr-libcpp'].prefix.alignment))
-	configure_args.append('LIBPBIHDF_INC={0}'.format(self.spec['blasr-libcpp'].prefix.hdf))
-	configure_args.append('LIBPBIHDF_LIB={0}'.format(self.spec['blasr-libcpp'].prefix.hdf))
-	configure_args.append('RT_LIBFLAGS={0}'.format(self.spec['blasr-libcpp'].prefix.hdf))
-	configure_args.append('HDF5_INC={0}'.format(self.spec['hdf5'].prefix.include))
-	configure_args.append('--shared')
-#	configure_args.append('HDF5_LIB={0}'.format(self.spec['hdf5'].prefix.lib))
-#	configure_args.append('Boost_INCLUDE_DIRS={0}'.format(self.spec['boost'].prefix))
-    	python('configure.py', *configure_args)
-        
+        configure_args = []
+        configure_args.append('LIBPBDATA_INC={0}'.format(
+                              self.spec['blasr-libcpp'].prefix.pbdata))
+        configure_args.append('LIBPBDATA_LIB={0}'.format(
+                              self.spec['blasr-libcpp'].prefix.pbdata))
+        configure_args.append('LIBBLASR_LIB={0}'.format(
+                              self.spec['blasr-libcpp'].prefix.alignment))
+        configure_args.append('LIBBLASR_INC={0}'.format(
+                              self.spec['blasr-libcpp'].prefix.alignment))
+        configure_args.append('LIBPBIHDF_INC={0}'.format(
+                              self.spec['blasr-libcpp'].prefix.hdf))
+        configure_args.append('LIBPBIHDF_LIB={0}'.format(
+                              self.spec['blasr-libcpp'].prefix.hdf))
+        configure_args.append('HDF5_INC={0}'.format(
+                              self.spec['hdf5'].prefix.include))
+        configure_args.append('HDF5_LIB={0}'.format(
+                              self.spec['hdf5'].prefix.lib))
+        configure_args.append('--shared')
+        python('configure.py', *configure_args)
+
     def install(self, spec, prefix):
-	make()
+        make()
+        mkdir(prefix.utils)
+        mkdir(prefix.bin)
+        install('blasr', prefix.bin.blasr)
+        install('utils/loadPulses', prefix.utils)
+        install('utils/pls2fasta', prefix.utils)
+        install('utils/samFilter', prefix.utils)
+        install('utils/samtoh5', prefix.utils)
+        install('utils/samtom4', prefix.utils)
+        install('utils/sawriter', prefix.utils)
+        install('utils/sdpMatcher', prefix.utils)
+        install('utils/toAfg', prefix.utils)
