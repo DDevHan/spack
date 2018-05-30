@@ -41,16 +41,17 @@ from spack import *
 
 
 class Pbbam(CMakePackage):
-    """The pbbam software package provides components to create, query, & edit PacBio BAM files and associated indices. These components include a core C++ library, bindings for additional languages, and command-line utilities."""
+    """The pbbam software package provides components to create, query,
+    & edit PacBio BAM files and associated indices.
+    These components include a core C++ library,
+    bindings for additional languages, and command-line utilities."""
 
-    # FIXME: Add a proper url for your package's homepage here.
     homepage = "https://github.com/PacificBiosciences/pbbam"
     url      = "https://github.com/PacificBiosciences/pbbam/tarball/b0f9993704f7e8572420c2d8febc92eaa9b6ba6e"
 
     version('2018.05.08', '7f322f6d47aa3a7da56c88edf51d8d8d',
-    	    url="https://github.com/PacificBiosciences/pbbam/tarball/b0f9993704f7e8572420c2d8febc92eaa9b6ba6e")
+            url="https://github.com/PacificBiosciences/pbbam/tarball/b0f9993704f7e8572420c2d8febc92eaa9b6ba6e")
 
-    # FIXME: Add dependencies if required.
     depends_on('zlib')
     depends_on('boost@1.55.0:')
     depends_on('htslib@1.3.1:')
@@ -58,20 +59,16 @@ class Pbbam(CMakePackage):
 
     def cmake_args(self):
         options = [
-             '-DPacBioBAM_build_tests:BOOL=OFF'
-	]
+            '-DPacBioBAM_build_tests:BOOL=OFF'
+        ]
 
         return options
 
     def install(self, spec, prefix):
-	install_tree('spack-build/bin', prefix.bin)
-	install_tree('spack-build/lib', prefix.lib)
-	install_tree('include/pbbam', prefix.include.pbbam)
+        install_tree('spack-build/bin', prefix.bin)
+        install_tree('spack-build/lib', prefix.lib)
+        install_tree('include/pbbam', prefix.include.pbbam)
+
     def setup_dependent_environment(self, spack_env, run_env, dependent_spec):
         spack_env.set('PacBioBAM_LIBRARIES', self.prefix.lib)
         spack_env.set('PacBioBAM_INCLUDE_DIRS', self.prefix.include)
-
-
-#    def setup_dependent_env(self, spack_env, run_env, dependent_spec):
-#	spack_env.set('PacBioBAM_LIBRARIES', self.spec.prefix) 
-#	spack_env.set('PacBioBAM_INCLUDE_DIRS', self.spec.prefix) 
