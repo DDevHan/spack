@@ -61,16 +61,16 @@ class Trinity(MakefilePackage):
  #       spack_env.append_flags('CFLAGS', self.compiler.openmp_flag)
 
     def build(self, spec, prefix):
-        make()
+        #make()
         cd(join_path(self.stage.source_path,"trinity-plugins"))
         tar = which('tar')
         tar('xzvf', 'ParaFly-0.1.0.tar.gz')
         cd(join_path(self.stage.source_path,"trinity-plugins","ParaFly-0.1.0"))
         configure("CPPFLAGS=-fopenmp", "CXXFLAGS=-fopenmp")
-        make("CPPFLAGS=-fopenmp")
+        make()
         cd('../')
-        make("trinity_essentials -fopenmp")
-        make("plugins -fopenmp")
+        #make("trinity_essentials -fopenmp")
+        #make("plugins -fopenmp")
 
     @property
     def build_targets(self):
