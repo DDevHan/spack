@@ -36,7 +36,7 @@ class BlasrLibcpp(Package):
     version('038971c97eb5403b982c177eb44e488d25e9994', 'bd75541ab5e0a53c62f534ee73746878')
 
     depends_on('pbbam')
-    depends_on('hdf5+cxx@1.8.12:')
+    depends_on('hdf5+cxx@1.8.12:1.8.99')
     depends_on('pkgconfig')
     depends_on('python')
 
