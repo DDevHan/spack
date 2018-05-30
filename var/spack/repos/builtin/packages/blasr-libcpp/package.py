@@ -38,10 +38,12 @@
 # please first remove this boilerplate and all FIXME comments.
 #
 from spack import *
-import pdb
+
 
 class BlasrLibcpp(Package):
-    """Blasr_libcpp is a library used by blasr and other executables such as samtoh5, loadPulses for analyzing PacBio sequences."""
+    """Blasr_libcpp is a library used by blasr
+    and other executables such as samtoh5,
+    loadPulses for analyzing PacBio sequences."""
 
     homepage = "https://github.com/PacificBiosciences/blasr_libcpp"
     url      = "https://github.com/PacificBiosciences/blasr_libcpp/tarball/b038971c97eb5403b982c177eb44e488d25e9994"
@@ -53,22 +55,25 @@ class BlasrLibcpp(Package):
     depends_on('pkgconfig')
     depends_on('python')
 
-    phases = ['configure','install']
+    phases = ['configure', 'install']
 
     def configure(self, spec, prefix):
-	configure_args=[]
-	configure_args.append('PBBAM_INC={0}'.format(self.spec['pbbam'].prefix))
-	configure_args.append('PBBAM_LIB={0}'.format(self.spec['pbbam'].prefix.lib))
-	configure_args.append('HDF5_INC={0}'.format(self.spec['hdf5'].prefix))
-	configure_args.append('HDF5_LIB={0}'.format(self.spec['hdf5'].prefix.lib))
-	python('configure.py', *configure_args)
+        configure_args = []
+        configure_args.append('PBBAM_INC={0}'.format(
+                              self.spec['pbbam'].prefix))
+        configure_args.append('PBBAM_LIB={0}'.format(
+                              self.spec['pbbam'].prefix.lib))
+        configure_args.append('HDF5_INC={0}'.format(
+                              self.spec['hdf5'].prefix))
+        configure_args.append('HDF5_LIB={0}'.format(
+                              self.spec['hdf5'].prefix.lib))
+        python('configure.py', *configure_args)
 
     def install(self, spec, prefix):
-	make()
-	install_tree('alignment', prefix.alignment)
-	install_tree('hdf', prefix.hdf)
-	install_tree('pbdata', prefix.pbdata)
+        make()
+        install_tree('alignment', prefix.alignment)
+        install_tree('hdf', prefix.hdf)
+        install_tree('pbdata', prefix.pbdata)
 
     def setup_dependent_environment(self, spack_env, run_env, dependent_spec):
-	spack_env.set('HDF5_INCLUDE_DIRS', self.prefix.hdf)
-
+        spack_env.set('HDF5_INCLUDE_DIRS', self.prefix.hdf)
