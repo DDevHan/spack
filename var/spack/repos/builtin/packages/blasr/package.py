@@ -26,7 +26,6 @@ from spack import *
 
 
 class Blasr(Package):
-    generator = 'Ninja'
     """The PacBio long read aligner."""
 
     homepage = "https://github.com/PacificBiosciences/blasr/wiki"
@@ -36,14 +35,13 @@ class Blasr(Package):
             url="https://github.com/PacificBiosciences/blasr/tarball/eab53fd220a05dfd7290962360a6ccce55be9c7c") 
 
     depends_on('ncurses')
-    depends_on('hdf5+cxx@1.8.12:')
+    depends_on('hdf5+cxx@1.8.12:1.8.99')
     depends_on('htslib')
     depends_on('zlib')
     depends_on('boost')
     depends_on('pbbam')
-    depends_on('pkgconfig')
-    depends_on('ninja')
     depends_on('blasr-libcpp')
+    depends_on('python', type='build')
 
     phases = ['configure', 'install']
 
