@@ -37,6 +37,7 @@ class BlasrLibcpp(Package):
 
     depends_on('pbbam')
     depends_on('hdf5+cxx@1.8.12:1.8.99')
+# maximum version is 1.8.20 currently. There doesn't appear to be a major version 1.9 and the 1.10.1 version doesn't build correctly. 
     depends_on('pkgconfig')
     depends_on('python')
 
