@@ -41,8 +41,7 @@ class BlasrLibcpp(Package):
 # major version 1.9 and the 1.10.1 version doesn't build correctly.
 # https://github.com/PacificBiosciences/blasr/issues/355
 
-    depends_on('pkgconfig')
-    depends_on('python')
+    depends_on('python', type='build')
 
     phases = ['configure', 'install']
 
