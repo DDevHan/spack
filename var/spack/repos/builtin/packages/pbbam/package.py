@@ -42,6 +42,8 @@ class Pbbam(CMakePackage):
     depends_on('htslib@1.3.1:')
     depends_on('doxygen+graphviz')
 
+    conflicts('%gcc@:5.2.0')
+
     def cmake_args(self):
         options = [
             '-DPacBioBAM_build_tests:BOOL=OFF'
