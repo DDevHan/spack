@@ -54,6 +54,11 @@ class Blasr(Package):
                              self.spec['blasr-libcpp'].prefix.pbdata)
         run_env.prepend_path('PATH', self.spec.prefix.utils)
 
+        # hdf has +mpi by default, so handle that possibility
+        if ('+mpi' in self.spec['hdf5']):
+            spack_env.set('CC', self.spec['mpi'].mpicc)
+            spack_env.set('CXX', self.spec['mpi'].mpicxx)
+
     def configure(self, spec, prefix):
         configure_args = []
         configure_args.append('LIBPBDATA_INC={0}'.format(
