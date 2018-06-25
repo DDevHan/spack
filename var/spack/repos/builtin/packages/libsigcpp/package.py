@@ -1,6 +1,6 @@
 ##############################################################################
-# Copyright (c) 2017, Los Alamos National Security, LLC
-# Produced at the Los Alamos National Laboratory.
+# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
+# Produced at the Lawrence Livermore National Laboratory.
 #
 # This file is part of Spack.
 # Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
@@ -22,30 +22,21 @@
 # License along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
-
 from spack import *
 
 
-class Parsplice(CMakePackage):
-    """ParSplice code implements the Parallel Trajectory Splicing algorithm"""
+class Libsigcpp(AutotoolsPackage):
+    """Libsigc++ is a C++ library for typesafe callbacks"""
 
-    homepage = "https://gitlab.com/exaalt/parsplice"
-    url      = "https://gitlab.com/api/v4/projects/exaalt%2Fparsplice/repository/archive.tar.gz?sha=v1.1"
+    homepage = "http://www.example.com"
+    url      = "https://ftp.acc.umu.se/pub/GNOME/sources/libsigc++/2.0/libsigc++-2.0.3.tar.gz"
 
-    tags = ['ecp', 'ecp-apps']
+    version('2.9.3', '0e5630fd0557ee80b5e5cbbcebaa2594')
+    version('2.1.1', '5ae4d6da9a408c90e86c776673c38972')
+    version('2.0.3', '57c6887dd46ce0bd312a4823589db5d8')
 
-    version('1.1', '3a72340d49d731a076e8942f2ae2f4e9')
-    version('develop', git='https://gitlab.com/exaalt/parsplice', branch='master')
-
-    depends_on("cmake@3.1:", type='build')
-    depends_on("berkeley-db")
-    depends_on("nauty")
-    depends_on("boost")
-    depends_on("mpi")
-    depends_on("eigen@3:")
-    depends_on("lammps+lib@20170901:")
-
-    def cmake_args(self):
-        options = ['-DBUILD_SHARED_LIBS=ON']
-
-        return options
+    def url_for_version(self, version):
+        """Handle version-based custom URLs."""
+        url = "https://ftp.acc.umu.se/pub/GNOME/sources/libsigc++"
+        ext = '.tar.gz' if version < Version('2.2.10') else '.tar.xz'
+        return url + "/%s/libsigc++-%s%s" % (version.up_to(2), version, ext)

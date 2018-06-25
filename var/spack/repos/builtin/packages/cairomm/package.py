@@ -1,6 +1,6 @@
 ##############################################################################
-# Copyright (c) 2017, Los Alamos National Security, LLC
-# Produced at the Los Alamos National Laboratory.
+# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
+# Produced at the Lawrence Livermore National Laboratory.
 #
 # This file is part of Spack.
 # Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
@@ -22,30 +22,17 @@
 # License along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
-
 from spack import *
 
 
-class Parsplice(CMakePackage):
-    """ParSplice code implements the Parallel Trajectory Splicing algorithm"""
+class Cairomm(AutotoolsPackage):
+    """Cairomm is a C++ wrapper for the cairo graphics library."""
 
-    homepage = "https://gitlab.com/exaalt/parsplice"
-    url      = "https://gitlab.com/api/v4/projects/exaalt%2Fparsplice/repository/archive.tar.gz?sha=v1.1"
+    homepage = "https://www.cairographics.org/cairomm/"
+    url      = "https://cairographics.org/releases/cairomm-1.6.4.tar.gz"
 
-    tags = ['ecp', 'ecp-apps']
+    version('1.6.4', '63561c62536173a98f03005dfe55c90e')
+    version('1.6.2', 'eac5d159e4cba98e32ea174483dee24e')
 
-    version('1.1', '3a72340d49d731a076e8942f2ae2f4e9')
-    version('develop', git='https://gitlab.com/exaalt/parsplice', branch='master')
-
-    depends_on("cmake@3.1:", type='build')
-    depends_on("berkeley-db")
-    depends_on("nauty")
-    depends_on("boost")
-    depends_on("mpi")
-    depends_on("eigen@3:")
-    depends_on("lammps+lib@20170901:")
-
-    def cmake_args(self):
-        options = ['-DBUILD_SHARED_LIBS=ON']
-
-        return options
+    depends_on('cairo')
+    depends_on('libsigcpp')

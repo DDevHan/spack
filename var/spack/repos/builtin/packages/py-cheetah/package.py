@@ -1,6 +1,6 @@
 ##############################################################################
-# Copyright (c) 2017, Los Alamos National Security, LLC
-# Produced at the Los Alamos National Laboratory.
+# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
+# Produced at the Lawrence Livermore National Laboratory.
 #
 # This file is part of Spack.
 # Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
@@ -22,30 +22,13 @@
 # License along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
-
 from spack import *
 
 
-class Parsplice(CMakePackage):
-    """ParSplice code implements the Parallel Trajectory Splicing algorithm"""
+class PyCheetah(PythonPackage):
+    """Cheetah is a template engine and code generation tool."""
 
-    homepage = "https://gitlab.com/exaalt/parsplice"
-    url      = "https://gitlab.com/api/v4/projects/exaalt%2Fparsplice/repository/archive.tar.gz?sha=v1.1"
+    homepage = "https://pypi.python.org/pypi/Cheetah/2.4.4"
+    url      = "https://pypi.io/packages/source/C/Cheetah/Cheetah-2.3.0.tar.gz"
 
-    tags = ['ecp', 'ecp-apps']
-
-    version('1.1', '3a72340d49d731a076e8942f2ae2f4e9')
-    version('develop', git='https://gitlab.com/exaalt/parsplice', branch='master')
-
-    depends_on("cmake@3.1:", type='build')
-    depends_on("berkeley-db")
-    depends_on("nauty")
-    depends_on("boost")
-    depends_on("mpi")
-    depends_on("eigen@3:")
-    depends_on("lammps+lib@20170901:")
-
-    def cmake_args(self):
-        options = ['-DBUILD_SHARED_LIBS=ON']
-
-        return options
+    version('2.3.0', 'e28ffef7f5c1660d66196639f162d9ce')

@@ -25,18 +25,25 @@
 from spack import *
 
 
-class Mitofates(Package):
-    """MitoFates predicts mitochondrial presequence, a cleavable localization
-       signal located in N-terminal, and its cleaved position."""
+class Slf4j(Package):
+    """The Simple Logging Facade for Java (SLF4J) serves as a simple facade
+    or abstraction for various logging frameworks (e.g. java.util.logging,
+    logback, log4j) allowing the end user to plug in the desired logging
+    framework at deployment time."""
 
-    homepage = "http://mitf.cbrc.jp/MitoFates/cgi-bin/top.cgi"
-    url      = "http://mitf.cbrc.jp/MitoFates/program/MitoFates_1.2.tar.gz"
+    homepage = "https://www.slf4j.org/"
+    url      = "https://www.slf4j.org/dist/slf4j-1.7.25.tar.gz"
 
-    version('1.2', 'aaac42a8e8c7318a4abde9df3a4b72d1')
+    version('1.8.0-beta2',  '75cb7e1bd12f3ed60eb976613f5efddb')
+    version('1.8.0-beta1',  'fdf1d147672071d986b8c82fa1bd2e96')
+    version('1.8.0-beta0',  '93c982570e08754e6da155e6eb55e947')
+    version('1.8.0-bata2',  'b63f26be375353e2e033be689415baa0')
+    version('1.8.0-alpha2', '260cb8e9abf2101554402e59bdcf47a9')
+    version('1.8.0-alpha1', 'c586040c2f03dd24544382c95cafcbcc')
+    version('1.8.0-alpha0', '6bf097e3f30331ebf7f678d7a034ac47')
+    version('1.7.25',       '259f9845b34cdd82909cb7a6982668f5', preferred=True)
 
-    depends_on('libsvm')
-    depends_on('perl', type='run')
+    depends_on('java', type='run')
 
     def install(self, spec, prefix):
-        install_tree('bin', prefix.bin)
-        install('MitoFates.pl', prefix)
+        install_tree('.', prefix.bin)
