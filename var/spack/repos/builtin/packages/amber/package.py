@@ -41,6 +41,7 @@ class Amber(Package):
     depends_on('zlib')
     depends_on('bzip2')
     depends_on('libxt')
+    depends_on('libx11')
     depends_on('libxext')
     depends_on('libxdmcp')
     # depends_on('tkinter') # not in spack yet
@@ -51,18 +52,24 @@ class Amber(Package):
     depends_on('patch')
     depends_on('bison')
     depends_on('boost')
+    depends_on('fftw')
 
     resource(
-        name='AmberTools',
+        name='ambertools',
         url="file://{0}/AmberTools16.tar.bz2".format(os.getcwd()),
-        md5='ca723e6780f70f46497282c9ea6645a3', placement = 'AmberTools'
+        md5='ca723e6780f70f46497282c9ea6645a3', placement = 'ambertools'
     )
 
     variant('cuda', default=False, description='Build with cuda support')
     variant('mpi', default=False, description='Use MPI for parallelization')
 
+    def patch(self):
+        copy_tree(join_path(self.stage.source_path, 'ambertools'), self.stage.source_path)
+        filter_file('check_amberhome $ambhome', '', 'AmberTools/src/configure2', string=True)
+#        filter_file(r'XHOME=', 'XHOME={0}'.format(self.spec['libxt'].prefix), 'AmberTools/src/config.h')
+
     def install(self, spec, prefix):
-        copy_tree(join_path(self.stage.source_path, 'AmberTools'), self.stage.source_path)
+#        copy_tree(join_path(self.stage.source_path, 'ambertools'), self.stage.source_path)
 #        export AMBERHOME=self.stage.source_path
         install_answer = ['N']
         install_answer_input = 'spack-config.in'
@@ -85,3 +92,5 @@ class Amber(Package):
     def setup_environment(self, spack_env, run_env):
         run_env.prepend_path('AMBERHOME', self.spec.prefix)
         spack_env.set('AMBERHOME', self.spec.prefix)
+        spack_env.set('XHOME', self.spec['libxt'].prefix)
+        spack_env.set('XLIBS', self.spec['libxt'].prefix.lib)
