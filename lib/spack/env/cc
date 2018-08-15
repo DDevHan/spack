@@ -64,8 +64,6 @@ parameters=(
 #   SPACK_DEBUG
 # Test command is used to unit test the compiler script.
 #   SPACK_TEST_COMMAND
-# Dependencies can be empty for pkgs with no deps:
-#   SPACK_DEPENDENCIES
 
 # die()
 # Prints a message and exits with error 1.

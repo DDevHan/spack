@@ -59,6 +59,7 @@ test_args = [
 test_include_paths = [
     '-I/test/include', '-I/other/include']
 
+<<<<<<< HEAD
 test_library_paths = [
     '-L/test/lib', '-L/other/lib']
 
