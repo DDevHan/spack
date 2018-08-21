@@ -37,15 +37,14 @@ class Amber(Package):
     version('16', '2d52556093a8c878b64f35b2ac2aae20')
 
     depends_on('flex')
-    depends_on('tcsh')
+    depends_on('tcsh', type=('build', 'run'))
     depends_on('zlib')
     depends_on('bzip2')
     depends_on('libxt')
     depends_on('libx11')
     depends_on('libxext')
     depends_on('libxdmcp')
-    # depends_on('tkinter') # not in spack yet
-    depends_on('openmpi')
+    depends_on('mpi', when='+mpi')
     depends_on('cuda', when='+cuda')
     depends_on('perl')
     depends_on('perl-extutils-makemaker')
@@ -53,6 +52,10 @@ class Amber(Package):
     depends_on('bison')
     depends_on('boost')
     depends_on('fftw')
+    depends_on('python+tk', type=('build', 'run'))
+    depends_on('py-matplotlib', type=('build', 'run'))
+    depends_on('py-scipy', type=('build', 'run'))
+
 
     resource(
         name='ambertools',
@@ -66,6 +69,7 @@ class Amber(Package):
     def patch(self):
         copy_tree(join_path(self.stage.source_path, 'ambertools'), self.stage.source_path)
         filter_file('check_amberhome $ambhome', '', 'AmberTools/src/configure2', string=True)
+        filter_file('/bin/csh', '/usr/bin/env csh', string=True)
 #        filter_file(r'XHOME=', 'XHOME={0}'.format(self.spec['libxt'].prefix), 'AmberTools/src/config.h')
 
     def install(self, spec, prefix):
