@@ -22,18 +22,39 @@
 # License along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
+#
+# This is a template package file for Spack.  We've put "FIXME"
+# next to all the things you'll want to change. Once you've handled
+# them, you can save this file and test your package like this:
+#
+#     spack install py-picrust
+#
+# You can edit this file again by typing:
+#
+#     spack edit py-picrust
+#
+# See the Spack documentation for more information on packaging.
+# If you submit this package back to Spack as a pull request,
+# please first remove this boilerplate and all FIXME comments.
+#
 from spack import *
 
 
-class PICRUSt(Package):
-    """PICRUSt (pronounced “pie crust”) is a bioinformatics software package 
-       designed to predict metagenome functional content from marker gene 
-       (e.g., 16S rRNA) surveys and full genomes."""
+class PyPicrust(PythonPackage):
+    """FIXME: Put a proper description of your package here."""
 
-    homepage = "http://picrust.github.io/picrust/"
+    # FIXME: Add a proper url for your package's homepage here.
+    homepage = "http://www.example.com"
     url      = "https://github.com/picrust/picrust/archive/v1.1.3.tar.gz"
 
-    version('1.1.3', '')
+    version('1.1.3', sha256='7538c8544899b8855deb73a2d7a4ccac4808ff294e161530a8c8762d472d8906')
 
-    depends_on('autoconf', type='build')
-    depends_on('automake', type='build')
+    # FIXME: Add dependencies if required.
+    # depends_on('py-setuptools', type='build')
+    # depends_on('py-foo',        type=('build', 'run'))
+
+    def build_args(self, spec, prefix):
+        # FIXME: Add arguments other than --prefix
+        # FIXME: If not needed delete this function
+        args = []
+        return args
