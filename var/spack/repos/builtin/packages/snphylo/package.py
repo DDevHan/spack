@@ -54,3 +54,5 @@ class Snphylo(Package):
 
     def setup_environment(self, spack_env, run_env):
         run_env.prepend_path('PATH', self.spec.prefix)
+
+        # testing
